@@ -5,6 +5,7 @@
         <title>Using Audio Tag</title>
         <script>
             var player;
+            var intv;
             
             //Initialization
             window.onload = function() {
@@ -39,6 +40,22 @@
             //Music Play Controls
             function playMusic() {
                 player.play();
+                intv = setInterval(update, 100);
+            }
+
+            function update() {
+                document.getElementById("songTime").innerHTML = millisToMins(player.currentTime);
+            }
+
+            function millisToMins(seconds) {
+                var numminutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
+                var numseconds = (((seconds % 31536000) % 86400) % 3600) % 60;
+                if(numseconds >= 10) {
+                    return numminutes + ":" + numseconds;       
+                }else {
+                    return numminutes + ":0" + numseconds;
+                }
+                
             }
 
             function pauseMusic() {
@@ -61,6 +78,7 @@
         <button id="btnPause">Pause</button>
         <button id="btnStop">Stop</button><br>
         <button id="btnVolUp">Volume +</button>
-        <button id="btnVolDown">Volume -</button>
+        <button id="btnVolDown">Volume -</button><br>
+        <span id="songTime"></span>
     </body>
 </html>
