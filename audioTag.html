@@ -6,6 +6,7 @@
         <script>
             var player;
             var intv;
+            var slider;
             
             //Initialization
             window.onload = function() {
@@ -15,6 +16,12 @@
                 document.getElementById("btnVolUp").addEventListener("click", volUp, false);
                 document.getElementById("btnVolDown").addEventListener("click", volDown, false);
                 player = document.getElementById("player");
+                slider = document.getElementById("sliderTime");
+                slider.addEventListener("change", reposition, false);
+            }
+
+            function reposition() {
+                player.currentTime = slider.value;
             }
 
             //Volume Controls
@@ -41,30 +48,34 @@
             function playMusic() {
                 player.play();
                 intv = setInterval(update, 100);
+                slider.max = player.duration;
             }
 
             function update() {
                 document.getElementById("songTime").innerHTML = millisToMins(player.currentTime);
+                slider.value = player.currentTime;
             }
 
             function millisToMins(seconds) {
                 var numminutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
                 var numseconds = (((seconds % 31536000) % 86400) % 3600) % 60;
                 if(numseconds >= 10) {
-                    return numminutes + ":" + numseconds;       
+                    return "Time Elabsed " + numminutes + ":" + Math.round(numseconds);       
                 }else {
-                    return numminutes + ":0" + numseconds;
+                    return "Time Elabsed " + numminutes + ":0" + Math.round(numseconds);
                 }
                 
             }
 
             function pauseMusic() {
                 player.pause();
+                clearInterval(intv);
             }
 
             function stopMusic() {
                 player.pause();
                 player.currentTime = 0;
+                clearInterval(intv);
             }
         </script>
     </head>
@@ -79,6 +90,7 @@
         <button id="btnStop">Stop</button><br>
         <button id="btnVolUp">Volume +</button>
         <button id="btnVolDown">Volume -</button><br>
-        <span id="songTime"></span>
+        <span id="songTime"></span><br>
+        <input id="sliderTime" type="range" min="0" value="0">
     </body>
 </html>
