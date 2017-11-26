@@ -3,6 +3,7 @@
 <html>
     <head>
         <title>Using Audio Tag</title>
+        <script src="music.js"></script>
         <script>
             var player;
             var intv;
@@ -18,6 +19,7 @@
                 player = document.getElementById("player");
                 slider = document.getElementById("sliderTime");
                 slider.addEventListener("change", reposition, false);
+                getMusicList();
             }
 
             function reposition() {
@@ -77,13 +79,54 @@
                 player.currentTime = 0;
                 clearInterval(intv);
             }
+
+            function getMusicList() {
+                var parser = new DOMParser();
+                xmlDocument = parser.parseFromString(xml, "text/xml");
+                //console.log(xmlDocument);
+                var elementsArray = xmlDocument.documentElement.getElementsByTagName("composition");
+                //console.log(elementsArray);
+                var arrayLength = elementsArray.length;
+                var output = "<table>";
+                for(var i=0; i< arrayLength; i++) {
+                    var title = elementsArray[i].getElementsByTagName("title")[0].firstChild.nodeValue;
+                    var composer = elementsArray[i].getElementsByTagName("composer")[0].firstChild.nodeValue;
+                    var time = elementsArray[i].getElementsByTagName("time")[0].firstChild.nodeValue;
+                    var fileName = elementsArray[i].getElementsByTagName("filename")[0].firstChild.nodeValue;
+                    output += "<tr>";
+                    output += ("<td onclick='songSelect(\"" + fileName + "\")'>" + title + " By: " + composer + "</td>");
+                    output += "</tr>";
+                    //console.log(title + " " + composer + " " + time + " " + fileName + " ");
+                }
+                output += "</table>";
+                document.getElementById("musiclist").innerHTML = output;
+            }
+
+            function songSelect(fn) {
+                //console.log(fn);
+                document.getElementById("player").src = fn;
+                playMusic();
+            }
         </script>
+        <style>
+            #musiclist td {
+                border: 1px solid grey;
+                padding: 5px;
+            }
+
+            #musiclist td:hover {
+                background-color: #990011;
+                color: white;
+            }
+        </style>
     </head>
 
     <body>
         <audio id="player">
-            <source src="caro.mp3" />
+            <!--
+            <source src="./music/caro.mp3" />
             <source src="caro.ogg" />
+            -->
         </audio>
         <button id="btnPlay">Play</button>
         <button id="btnPause">Pause</button>
@@ -92,5 +135,6 @@
         <button id="btnVolDown">Volume -</button><br>
         <span id="songTime"></span><br>
         <input id="sliderTime" type="range" min="0" value="0">
+        <div id="musiclist"></div>
     </body>
 </html>
